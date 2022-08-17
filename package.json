@@ -1,0 +1,20 @@
+{
+  "name": "shrd",
+  "version": "1.0.0",
+  "description": "A school 1538 shrd project (2022-23)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-unit": "echo \"Testing...\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shrd-team-1538/shrd-proj-2022.git"
+  },
+  "author": "Sanicboi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shrd-team-1538/shrd-proj-2022/issues"
+  },
+  "homepage": "https://github.com/shrd-team-1538/shrd-proj-2022#readme"
+}
