@@ -12,6 +12,6 @@
 <a href="https://youtube.com">Youtube</a>
 Ещё можно добавить стилей:
 ```
-    <a href="https://youtube.com" style="color: black; text-decoration: none;">Youtube</a>
+    <a href="https://youtube.com" style="color: black !important; text-decoration: none !important;">Youtube</a>
 ```
-<a href="https://youtube.com" style="color: black; text-decoration: none;">Youtube</a>
+<a href="https://youtube.com" style="color: black !important; text-decoration: none !important;">Youtube</a>
