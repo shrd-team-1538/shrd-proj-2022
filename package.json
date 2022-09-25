@@ -1,20 +1,22 @@
 {
   "name": "shrd",
-  "version": "1.0.0",
-  "description": "A school 1538 shrd project (2022-23)",
-  "main": "index.js",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "test-unit": "echo \"Testing...\""
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "devstart": "docker-compose up -d && npm run dev",
+    "devsetup": "cd \"server/api gateway\" && npm install && cd ../auth && npm install && cd ../static && npm install && cd ../.. && npm install && docker-compose up"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shrd-team-1538/shrd-proj-2022.git"
+  "dependencies": {
+    "vue": "^3.2.37"
   },
-  "author": "Sanicboi",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/shrd-team-1538/shrd-proj-2022/issues"
-  },
-  "homepage": "https://github.com/shrd-team-1538/shrd-proj-2022#readme"
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^3.1.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0",
+    "vue-tsc": "^0.40.4"
+  }
 }
