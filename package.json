@@ -8,7 +8,8 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "devstart": "docker-compose up -d && npm run dev",
-    "devsetup": "cd \"server/api gateway\" && npm install && cd ../auth && npm install && cd ../static && npm install && cd ../.. && npm install && docker-compose up"
+    "devsetup": "cd \"server/api gateway\" && npm install && cd ../auth && npm install && cd ../static && npm install && cd ../.. && npm install && docker-compose up",
+    "test-unit": "echo \"tested\""
   },
   "dependencies": {
     "vue": "^3.2.37"
