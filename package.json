@@ -9,9 +9,18 @@
     "preview": "vite preview",
     "devstart": "docker-compose up -d && npm run dev",
     "devsetup": "cd \"server/api gateway\" && npm install && cd ../auth && npm install && cd ../static && npm install && cd ../.. && npm install && docker-compose up",
-    "test-unit": "echo \"tested\""
+    "test-unit": "echo \"tested\"",
+    "rebuild": "docker-compose down && docker-compose build && docker-compose up"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.7.1",
+    "@grpc/proto-loader": "^0.7.3",
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.20.0",
+    "dotenv": "^16.0.2",
+    "jsonwebtoken": "^8.5.1",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.0",
     "vue": "^3.2.37"
   },
   "devDependencies": {

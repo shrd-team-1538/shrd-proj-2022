@@ -3,4 +3,4 @@ WORKDIR /app
 COPY package*.json .
 RUN npm install
 COPY . .
-CMD ["npm", "start"]
+CMD ["./wait-for-it.sh", "db:3306", "--", "node", "index"]
