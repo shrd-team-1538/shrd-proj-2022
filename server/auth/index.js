@@ -52,7 +52,7 @@ app.post('/api/auth/signup', async (req, res) => {
     const token = jwt.sign(id, process.env.JWT_KEY, {expiresIn: "1h"});
     res.status(201).end(token);
 })
-app.listen(9090)
+app.listen(9090);
 
 
 
