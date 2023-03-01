@@ -1,6 +1,6 @@
 <template>
 <h1>Hello world</h1>
-<!-- <BarChart :options="options" :data="data"></BarChart> -->
+<!-- <BarChart :options="options" :data="data"></BarChart> nikita -->
 <button @click="incr()">Incr</button>
 </template>
 <script setup lang="ts">
