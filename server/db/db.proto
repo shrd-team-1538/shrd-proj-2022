@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package dbPackage;
+
+service DB {
+    // rpc createTodo(TodoItem) returns (TodoItem);
+    // rpc readTodos(noparam) returns (TodoItems);
+    // rpc readTodosStream(noparam) returns (stream TodoItem);
+    rpc verifyAuth(userId) returns (isOk);
+    rpc findUserByPublicKey(publicKeyData) returns (userData);
+    rpc createUser(createUserData) returns (creationStatus);
+    rpc deleteUser(userId) returns (isOk);
+    rpc editUser(editUserData) returns (isOk);
+    rpc getUserProfile(userId) returns (profileData);
+}
+
+message userId {
+    int32 id = 1;
+}
+
+message isOk {
+    bool ok = 1;
+}
+
+
+message publicKeyData {
+    string key = 1;
+    string type = 2;
+}
+
+message noparam {
+
+}
+message profileData {
+    string username = 1;
+    int32 rank = 2;
+    int32 type = 3;
+    int32 id = 64;
+}
+
+message userData {
+    string username = 1;
+    string password = 2;
+    string email = 3;
+    int32 rank = 4;
+    int32 type = 5;
+    int32 id = 6;
+
+}
+message createUserData {
+    string username = 1;
+    string password = 2;
+    string email = 3;
+}
+message userDataNoPWD {
+    string username = 1;
+    string email = 2;
+    int32 rank = 3;
+    int32 type = 4;
+}
+message creationStatus {
+    bool created = 1;
+    string conflict = 2;
+    int32 id = 3;
+}
+message editUserData {
+    string username = 1;
+    string password = 2;
+    string newEmail = 4;
+    string newPassword = 5;
+    string newUsername = 6;
+}
+// message TodoItem {
+//     int32 id = 1;
+//     string text = 2;
+// }
+
+// message TodoItems {
+//     repeated TodoItem items = 1;
+// }

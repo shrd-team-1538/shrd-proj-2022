@@ -1,0 +1,4 @@
+FROM nginx:alpine
+ENV NGINX_HOST=blog.com
+ENV NGINX_PORT=80
+EXPOSE ${NGINX_PORT}
