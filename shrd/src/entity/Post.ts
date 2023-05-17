@@ -7,10 +7,14 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    charset: "UTF8_GENERAL_CI"
+  })
   name: string;
 
-  @Column()
+  @Column({
+    charset: "UTF8_GENERAL_CI"
+  })
   text: string;
 
   @ManyToOne(() => User, (user) => user.posts)

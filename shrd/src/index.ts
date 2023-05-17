@@ -1,13 +1,16 @@
 import { AppDataSource } from "./data-source";
 import { User, CreatedJWT } from "./entity/User";
-import * as express from "express";
+import express from "express";
 import { Post } from "./entity/Post";
-// import { Question } from './entity/Question';
+import { Question } from "./entity/Question";
 import { Repository } from "typeorm";
-// import { Answer } from './entity/Answer';
+import { Answer } from "./entity/Answer";
 import { Device } from "./entity/Device";
 import { UserRouter } from "./routers/user";
 import { DeviceRouter } from "./routers/device";
+import { PostRouter } from "./routers/post";
+import { QuestionRouter } from "./routers/question";
+import { AnswerRouter } from "./routers/answer";
 
 export interface AuthenticatedReq extends express.Request {
   user?: User;
@@ -48,8 +51,8 @@ AppDataSource.initialize()
   .then(async () => {
     const userRepo = AppDataSource.getRepository(User);
     const postRepo = AppDataSource.getRepository(Post);
-    // const questionRepo = AppDataSource.getRepository(Question);
-    // const answerRepo = AppDataSource.getRepository(Answer);
+    const questionRepo = AppDataSource.getRepository(Question);
+    const answerRepo = AppDataSource.getRepository(Answer);
     const deviceRepo = AppDataSource.getRepository(Device);
 
     const app = express();
@@ -97,41 +100,47 @@ AppDataSource.initialize()
       }
     );
 
-    app.get("/api/posts/:id", async (req, res) => {
-      const post = await postRepo.findOne({
-        where: {
-          id: Number(req.params.id),
-        },
-        relations: {
-          device: true,
-          user: true,
-        },
-      });
+    app.put(
+      "/api/devices/:id",
+      (req, res, next) => auth(req, res, next, userRepo),
+      async (req: AuthenticatedReq, res) => {
+        await DeviceRouter.put(req, res, deviceRepo);
+      }
+    );
 
-      if (post) return res.status(200).json(post);
-      return res.status(404).end();
+    app.delete(
+      "/api/devices/:id",
+      (req, res, next) => auth(req, res, next, userRepo),
+      async (req: AuthenticatedReq, res) => {
+        await DeviceRouter.delete(req, res, deviceRepo);
+      }
+    );
+
+    app.get('/api/posts/new', async (req, res) =>{
+      try {
+        const result = await postRepo.createQueryBuilder("post")
+          .leftJoin("post.user", "user")
+          .addSelect(["user.name", "user.id"])
+          .take(10)
+          .orderBy("post.createdAt", "DESC")
+          .getMany();
+          if (result.length === 0) return res.status(404).end();
+          res.status(200).json(result);
+      } catch (error) {
+        console.log(error);
+        res.status(500).end();
+      }
+    });
+
+    app.get("/api/posts/:id", async (req, res) => {
+      await PostRouter.get(req, res, postRepo);
     });
 
     app.post(
       "/api/post",
       (req, res, next) => auth(req, res, next, userRepo),
       async (req: AuthenticatedReq, res) => {
-        const user = req.user;
-        if (!user) return res.status(401).end();
-        const device = await deviceRepo.findOne({
-          where: {
-            id: Number(req.body.device),
-          },
-        });
-        if (!device) res.status(400).end();
-        const post = new Post();
-        console.log(req.body);
-        post.text = req.body.text;
-        post.name = req.body.name;
-        post.user = user;
-        post.device = device;
-        await postRepo.save(post);
-        res.status(201).end();
+        await PostRouter.post(req, res, deviceRepo, postRepo);
       }
     );
 
@@ -139,23 +148,7 @@ AppDataSource.initialize()
       "/api/posts/:id",
       (req, res, next) => auth(req, res, next, userRepo),
       async (req: AuthenticatedReq, res) => {
-        const user = req.user;
-        if (!user) return res.status(401).end();
-        const post = await postRepo.findOne({
-          where: {
-            id: +req.params.id,
-            user: user,
-          },
-        });
-
-        if (!post) res.status(404).end();
-
-        post.text = req.body.text || post.text;
-        post.name = req.body.name || post.name;
-        const result = await postRepo.save(post);
-        if (!result) res.status(500).end();
-
-        res.status(204).end();
+        await PostRouter.put(req, res, postRepo);
       }
     );
 
@@ -163,20 +156,72 @@ AppDataSource.initialize()
       "/api/posts/:id",
       (req, res, next) => auth(req, res, next, userRepo),
       async (req: AuthenticatedReq, res) => {
-        const user = req.user;
-        if (!user) return res.status(401).end();
-        const post = await postRepo.findOne({
-          where: {
-            id: +req.params.id,
-            user: user,
-          },
-        });
-        if (!post) res.status(404).end();
-        const { affected } = await postRepo.delete(post);
-        if (affected) return res.status(204).end();
-        res.status(500).end();
+        await PostRouter.delete(req, res, postRepo);
       }
     );
+
+    app.get("/api/questions/search",async (req, res) => {
+      try {
+        const qs: {q?: string} = req.query;
+        if (!qs) return res.status(400).end();
+        if (!qs.q) return res.status(400).end();
+        const result = await questionRepo.createQueryBuilder("question")
+          .where("question.name LIKE :q OR question.text LIKE :q", {q: `%${qs.q}%`})
+          .leftJoin("question.user", "user")
+          .addSelect(["user.name", "user.id"])
+          .getMany();
+        if (result.length === 0) return res.status(404).end();
+        res.status(200).json(result);
+      } catch (error) {
+        console.log(error);
+        res.status(500).end();
+      }
+    })
+
+    app.get('/api/questions/popular', async (req, res) => {
+      await QuestionRouter.mostPopularForLastWeek(req, res, questionRepo);
+    })
+
+    app.get("/api/questions/:id", async (req, res) => {
+      await QuestionRouter.get(req, res, questionRepo);
+    });
+
+    app.post(
+      "/api/question",
+      (req, res, next) => auth(req, res, next, userRepo),
+      async (req: AuthenticatedReq, res) => {
+        await QuestionRouter.post(req, res, questionRepo, deviceRepo);
+      }
+    );
+
+    app.put(
+      "/api/questions/:id",
+      (req, res, next) => auth(req, res, next, userRepo),
+      async (req: AuthenticatedReq, res) => {
+        await QuestionRouter.put(req, res, questionRepo);
+      }
+    );
+
+    app.delete(
+      "/api/questions/:id",
+      (req, res, next) => auth(req, res, next, userRepo),
+      async (req: AuthenticatedReq, res) => {
+        await QuestionRouter.delete(req, res, questionRepo);
+      }
+    );
+
+    app.get("/api/answers/:id", async (req, res) => {
+      await AnswerRouter.get(req, res, answerRepo);
+    });
+
+    app.post(
+      "/api/answer",
+      (req, res, next) => auth(req, res, next, userRepo),
+      async (req: AuthenticatedReq, res) => {
+        await AnswerRouter.post(req, res, answerRepo, questionRepo);
+      }
+    );
+
 
     app.listen(80, () => {
       console.log("listening on port 80");

@@ -10,10 +10,14 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    charset: "UTF8_GENERAL_CI"
+  })
   name: string;
 
-  @Column()
+  @Column({
+    charset: "UTF8_GENERAL_CI"
+  })
   password: string;
 
   @OneToMany(() => Post, (post) => post.user)

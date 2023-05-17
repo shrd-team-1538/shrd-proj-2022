@@ -8,7 +8,9 @@ export class Answer {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    charset: "UTF8_GENERAL_CI"
+  })
   text: string;
 
   @Column()

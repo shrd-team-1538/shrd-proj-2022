@@ -7,10 +7,14 @@ export class Device {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    charset: "UTF8_GENERAL_CI"
+  })
   name: string;
 
-  @Column()
+  @Column({
+    charset: "UTF8_GENERAL_CI"
+  })
   description: string;
 
   @OneToMany(() => Post, (post) => post.device)

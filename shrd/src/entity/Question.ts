@@ -14,8 +14,15 @@ export class Question {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    charset: "UTF8_GENERAL_CI"
+  })
   text: string;
+
+  @Column({
+    charset: "UTF8_GENERAL_CI"
+  })
+  name: string;
 
   @Column()
   createdAt: Date;
